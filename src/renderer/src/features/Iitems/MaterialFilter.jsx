@@ -1,8 +1,10 @@
 import styled from 'styled-components';
-import { useSearchParams } from 'react-router-dom';
+
 import Select from '../../components/Select';
 
 import { useMaterial } from '../material/useMaterial';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMaterialFilter } from './filterSlice';
 
 const FilterCell = styled.div`
 	display: flex;
@@ -13,7 +15,9 @@ const FilterCell = styled.div`
 
 function MaterialFilter() {
 	const { isLoading, materials } = useMaterial();
-	const [searchParams, setSearchParams] = useSearchParams();
+
+	const dispatch = useDispatch();
+	const { materialFilter } = useSelector((store) => store.filter);
 
 	if (isLoading) return null;
 
@@ -22,11 +26,8 @@ function MaterialFilter() {
 		...materials.map((material) => ({ value: material.name, label: material.name })),
 	];
 
-	const materialFilter = searchParams.get('materialFilter') || '';
-
 	function handleChange(e) {
-		searchParams.set('materialFilter', e.target.value);
-		setSearchParams(searchParams);
+		dispatch(setMaterialFilter(e.target.value));
 	}
 
 	return (

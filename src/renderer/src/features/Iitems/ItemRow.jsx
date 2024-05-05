@@ -23,17 +23,16 @@ const Cell = styled.div`
 `;
 
 const NumberOfPiecesCell = styled(Cell)`
-	${(props) => {
-		const { numberOfPieces } = props;
-		if (numberOfPieces === 0) {
+	${({ pieces }) => {
+		if (pieces === 0) {
 			return css`
 				background-color: var(--color-red-700);
 			`;
-		} else if (numberOfPieces >= 1 && numberOfPieces <= 10) {
+		} else if (pieces >= 1 && pieces <= 10) {
 			return css`
 				background-color: var(--color-yellow-100);
 			`;
-		} else if (numberOfPieces > 10) {
+		} else if (pieces > 10) {
 			return css`
 				background-color: var(--color-green-100);
 			`;
@@ -47,7 +46,6 @@ const Toggle = styled.div`
 
 function ItemRow({ item }) {
 	const { isDeleting, deleteItem } = useDeleteItem();
-	console.log(item);
 
 	const {
 		id: itemId,
@@ -74,7 +72,7 @@ function ItemRow({ item }) {
 			<Cell>{manufacture}</Cell>
 			<Cell>{pricePerKilo}</Cell>
 			<Cell>{weightPerPiece}</Cell>
-			<NumberOfPiecesCell numberOfPieces={numberOfPieces}>{numberOfPieces}</NumberOfPiecesCell>
+			<NumberOfPiecesCell pieces={numberOfPieces}>{numberOfPieces}</NumberOfPiecesCell>
 			<Cell>{totalWeight}</Cell>
 			<Cell>{totalPrice}</Cell>
 			<Cell>{inventoryLocation}</Cell>

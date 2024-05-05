@@ -1,8 +1,10 @@
 import styled from 'styled-components';
-import { useSearchParams } from 'react-router-dom';
+
 import Select from '../../components/Select';
 
 import { useType } from '../type/useType';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTypeFilter } from './filterSlice';
 
 const FilterCell = styled.div`
 	display: flex;
@@ -13,7 +15,9 @@ const FilterCell = styled.div`
 
 function TypeFilter() {
 	const { isLoading, types } = useType();
-	const [searchParams, setSearchParams] = useSearchParams();
+
+	const dispatch = useDispatch();
+	const { typeFilter } = useSelector((store) => store.filter);
 
 	if (isLoading) return null;
 
@@ -22,11 +26,8 @@ function TypeFilter() {
 		...types.map((type) => ({ value: type.name, label: type.name })),
 	];
 
-	const typeFilter = searchParams.get('typeFilter') || '';
-
 	function handleChange(e) {
-		searchParams.set('typeFilter', e.target.value);
-		setSearchParams(searchParams);
+		dispatch(setTypeFilter(e.target.value));
 	}
 
 	return (

@@ -1,7 +1,9 @@
 import styled from 'styled-components';
-import { useSearchParams } from 'react-router-dom';
+// import { useSearchParams } from 'react-router-dom';
 import Select from '../../components/Select';
 import { useCategory } from '../category/useCategory';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCategoryFilter } from './filterSlice';
 
 const FilterCell = styled.div`
 	display: flex;
@@ -12,7 +14,9 @@ const FilterCell = styled.div`
 
 function CategoryFilter() {
 	const { isLoading, categories } = useCategory();
-	const [searchParams, setSearchParams] = useSearchParams();
+
+	const dispatch = useDispatch();
+	const { categoryFilter } = useSelector((store) => store.filter);
 
 	if (isLoading) return null;
 
@@ -21,11 +25,8 @@ function CategoryFilter() {
 		...categories.map((category) => ({ value: category.name, label: category.name })),
 	];
 
-	const categoryFilter = searchParams.get('categoryFilter') || '';
-
 	function handleChange(e) {
-		searchParams.set('categoryFilter', e.target.value);
-		setSearchParams(searchParams);
+		dispatch(setCategoryFilter(e.target.value));
 	}
 
 	return (

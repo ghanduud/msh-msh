@@ -1,8 +1,10 @@
 import styled from 'styled-components';
-import { useSearchParams } from 'react-router-dom';
+
 import Select from '../../components/Select';
 
 import { useSize } from '../size/useSize';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSizeFilter } from './filterSlice';
 
 const FilterCell = styled.div`
 	display: flex;
@@ -13,7 +15,9 @@ const FilterCell = styled.div`
 
 function SizeFilter() {
 	const { isLoading, sizes } = useSize();
-	const [searchParams, setSearchParams] = useSearchParams();
+
+	const dispatch = useDispatch();
+	const { sizeFilter } = useSelector((store) => store.filter);
 
 	if (isLoading) return null;
 
@@ -22,11 +26,8 @@ function SizeFilter() {
 		...sizes.map((size) => ({ value: size.name, label: size.name })),
 	];
 
-	const sizeFilter = searchParams.get('sizeFilter') || '';
-
 	function handleChange(e) {
-		searchParams.set('sizeFilter', e.target.value);
-		setSearchParams(searchParams);
+		dispatch(setSizeFilter(e.target.value));
 	}
 
 	return (

@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import { useInventory } from '../inventories/useInventory';
-import { useSearchParams } from 'react-router-dom';
+// import { useSearchParams } from 'react-router-dom';
 import Select from '../../components/Select';
+import { useDispatch, useSelector } from 'react-redux';
+import { setInventoryFilter } from './filterSlice';
 
 const FilterCell = styled.div`
 	display: flex;
@@ -12,7 +14,9 @@ const FilterCell = styled.div`
 
 function InventoryFilter() {
 	const { isLoading, inventories } = useInventory();
-	const [searchParams, setSearchParams] = useSearchParams();
+
+	const dispatch = useDispatch();
+	const { inventoryFilter } = useSelector((store) => store.filter);
 
 	if (isLoading) return null;
 
@@ -21,11 +25,8 @@ function InventoryFilter() {
 		...inventories.map((inventory) => ({ value: inventory.location, label: inventory.location })),
 	];
 
-	const inventoryFilter = searchParams.get('inventoryFilter') || '';
-
 	function handleChange(e) {
-		searchParams.set('inventoryFilter', e.target.value);
-		setSearchParams(searchParams);
+		dispatch(setInventoryFilter(e.target.value));
 	}
 
 	return (

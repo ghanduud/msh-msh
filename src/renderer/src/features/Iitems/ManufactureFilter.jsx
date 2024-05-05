@@ -1,8 +1,10 @@
 import styled from 'styled-components';
-import { useSearchParams } from 'react-router-dom';
+
 import Select from '../../components/Select';
 
 import { useManufacture } from '../manufacture/useManufacture';
+import { useDispatch, useSelector } from 'react-redux';
+import { setManufactureFilter } from './filterSlice';
 
 const FilterCell = styled.div`
 	display: flex;
@@ -13,7 +15,9 @@ const FilterCell = styled.div`
 
 function ManufactureFilter() {
 	const { isLoading, manufactures } = useManufacture();
-	const [searchParams, setSearchParams] = useSearchParams();
+
+	const dispatch = useDispatch();
+	const { manufactureFilter } = useSelector((store) => store.filter);
 
 	if (isLoading) return null;
 
@@ -22,11 +26,8 @@ function ManufactureFilter() {
 		...manufactures.map((manufacture) => ({ value: manufacture.name, label: manufacture.name })),
 	];
 
-	const manufactureFilter = searchParams.get('manufactureFilter') || '';
-
 	function handleChange(e) {
-		searchParams.set('manufactureFilter', e.target.value);
-		setSearchParams(searchParams);
+		dispatch(setManufactureFilter(e.target.value))
 	}
 
 	return (
