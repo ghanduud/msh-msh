@@ -304,13 +304,15 @@ async function deleteItemById({ id }) {
 	}
 }
 
-async function updatePrice({ id, pricePerKilo }) {
+async function updatePrice({ id, pricePerKilo, numberOfPieces, weightPerPiece }) {
 	try {
 		await sequelize.sync();
 		const item = await Item.findByPk(id);
 		if (!item) return { error: `Can not find item to update price` };
 
 		item.pricePerKilo = pricePerKilo;
+		item.numberOfPieces = numberOfPieces;
+		item.weightPerPiece = weightPerPiece;
 
 		await item.save();
 		return { error: null };

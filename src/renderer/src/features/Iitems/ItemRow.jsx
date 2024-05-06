@@ -86,7 +86,7 @@ function ItemRow({ item }) {
 								<Menus.Button icon={<TbTransform />}>نقل بضائع</Menus.Button>
 							</Modal.Open>
 							<Modal.Open opens='updatePrice'>
-								<Menus.Button icon={<HiPencil />}>تغيير السعر</Menus.Button>
+								<Menus.Button icon={<HiPencil />}>تغيير </Menus.Button>
 							</Modal.Open>
 							<Modal.Open opens='delete'>
 								<Menus.Button menutype='delete' icon={<HiTrash />}>

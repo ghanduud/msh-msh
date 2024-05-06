@@ -37,11 +37,17 @@ function UpdatePriceForm({ itemPriceToUpdate, onCloseModal }) {
 			<FormRow label='السعر الجديد' error={errors?.pricePerKilo?.message}>
 				<Input type='number' id='pricePerKilo' disabled={isUpdating} {...register('pricePerKilo')} />
 			</FormRow>
+			<FormRow label='العدد الجديد' error={errors?.pricePerKilo?.message}>
+				<Input type='number' id='numberOfPieces' disabled={isUpdating} {...register('numberOfPieces')} />
+			</FormRow>
+			<FormRow label='الوزن الجديد' error={errors?.pricePerKilo?.message}>
+				<Input type='number' id='weightPerPiece' disabled={isUpdating} {...register('weightPerPiece')} />
+			</FormRow>
 			<FormRow>
 				<Button variation='secondary' type='reset' onClick={() => onCloseModal?.()}>
 					الغاء
 				</Button>
-				<Button disabled={isUpdating}>تغيير السعر</Button>
+				<Button disabled={isUpdating}>تغيير</Button>
 			</FormRow>
 		</Form>
 	);
