@@ -9,6 +9,8 @@ import { apiInventory } from '../main/models/Inventory';
 import { apiMaterial } from '../main/models/Material';
 import { apiItem } from '../main/models/Item';
 
+import { apiOutOrder } from '../main/models/OutOrder';
+
 const api = {};
 
 if (process.contextIsolated) {
@@ -21,6 +23,7 @@ if (process.contextIsolated) {
 		contextBridge.exposeInMainWorld('apiInventory', apiInventory);
 		contextBridge.exposeInMainWorld('apiMaterial', apiMaterial);
 		contextBridge.exposeInMainWorld('apiItem', apiItem);
+		contextBridge.exposeInMainWorld('apiOutOrder', apiOutOrder);
 		contextBridge.exposeInMainWorld('api', api);
 	} catch (error) {
 		console.error(error);

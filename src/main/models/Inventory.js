@@ -1,4 +1,4 @@
-import { Inventory, sequelize } from './sqlite';
+import { Inventory, Item, sequelize } from './sqlite';
 
 async function createInventory({ location, maxCapacity }) {
 	try {
@@ -10,20 +10,60 @@ async function createInventory({ location, maxCapacity }) {
 		if (!tableExists.includes('Inventories')) {
 			// If the table doesn't exist, create it
 			await Inventory.sync();
-			// console.log('Inventory table created.');
 		}
 
 		// Add the provided Inventory to the table
-		await Inventory.create({
+		const newInventory = await Inventory.create({
 			location: location,
 			maxCapacity: maxCapacity,
 			currentCapacity: 0, // Set the default currentCapacity to zero
 		});
-		// console.log(`Inventory added: Location - ${location}, Max Capacity - ${maxCapacity}`);
+
+		// Fetch all unique items characteristics
+		const items = await Item.findAll({
+			attributes: [
+				'CategoryId',
+				'TypeId',
+				'SizeId',
+				'MaterialId',
+				'ManufactureId',
+				'weightPerPiece',
+				'pricePerKilo',
+			],
+			group: [
+				'CategoryId',
+				'TypeId',
+				'SizeId',
+				'MaterialId',
+				'ManufactureId',
+				'weightPerPiece',
+				'pricePerKilo',
+			],
+		});
+
+		// Create entries for each existing item in the new inventory with numberOfPieces set to 0
+		for (const item of items) {
+			const { CategoryId, TypeId, SizeId, MaterialId, ManufactureId, weightPerPiece, pricePerKilo } = item;
+
+			const itemId = `${CategoryId}-${TypeId}-${SizeId}-${MaterialId}-${ManufactureId}-${newInventory.id}`;
+			await Item.create({
+				id: itemId, // Set the unique item ID
+				weightPerPiece: weightPerPiece,
+				pricePerKilo: pricePerKilo,
+				numberOfPieces: 0, // Set numberOfPieces to 0
+				CategoryId: CategoryId,
+				TypeId: TypeId,
+				SizeId: SizeId,
+				ManufactureId: ManufactureId,
+				InventoryId: newInventory.id,
+				MaterialId: MaterialId,
+			});
+		}
 
 		return { error: null };
 	} catch (error) {
-		return { error: `error in adding inventory` };
+		console.error(error);
+		return { error: 'Error in adding inventory' };
 	}
 }
 
@@ -85,6 +125,7 @@ async function getInventory({ id }) {
 async function deleteInventory({ id }) {
 	try {
 		await sequelize.sync();
+
 		// Get the inventory with the specified ID
 		const inventoryToDelete = await Inventory.findByPk(id);
 
@@ -95,8 +136,13 @@ async function deleteInventory({ id }) {
 
 		// Check if the current capacity is zero
 		if (inventoryToDelete.currentCapacity !== 0) {
-			return { error: `Inventory is not empty to delete.` };
+			return { error: `Inventory is not empty. Cannot delete.` };
 		}
+
+		// Delete all items associated with this inventory
+		await Item.destroy({
+			where: { InventoryId: id },
+		});
 
 		// Delete the inventory
 		await inventoryToDelete.destroy();

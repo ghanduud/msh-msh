@@ -13,6 +13,9 @@ import Materials from './pages/Materials';
 import Categories from './pages/Categories';
 import Sizes from './pages/Sizes';
 import Types from './pages/Types';
+import OutOrders from './pages/OutOrders';
+import OutOrder from './pages/OutOrder';
+import CreateOutOrder from './pages/CreateOutOrder';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -39,6 +42,9 @@ function App() {
 						<Route path='inventories' element={<Inventories />} />
 						<Route path='manufactures' element={<Manufactures />} />
 						<Route path='materials' element={<Materials />} />
+						<Route path='outOrders' element={<OutOrders />} />
+						<Route path='outOrder/:outOrderId' element={<OutOrder />} />
+						<Route path='createOutOrder' element={<CreateOutOrder />} />
 					</Route>
 				</Routes>
 			</HashRouter>

@@ -8,6 +8,7 @@ const StyledTable = styled.div`
 	background-color: var(--color-grey-0);
 	border-radius: 7px;
 	overflow: hidden;
+	margin-bottom: 4rem;
 `;
 
 const CommonRow = styled.div`

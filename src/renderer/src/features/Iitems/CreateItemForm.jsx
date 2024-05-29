@@ -1,9 +1,8 @@
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
 
 import { useCreateItem } from './useCreateItem';
 import { useCategory } from '../category/useCategory';
-import { useInventory } from '../inventories/useInventory';
+
 import { useManufacture } from '../manufacture/useManufacture';
 import { useMaterial } from '../material/useMaterial';
 import { useSize } from '../size/useSize';
@@ -18,25 +17,17 @@ import Button from '../../components/Button';
 
 function CreateItemForm({ onCloseModal }) {
 	const { isLoading: isLoadingCategory, categories } = useCategory();
-	const { isLoading: isLoadingInventory, inventories } = useInventory();
 	const { isLoading: isLoadingManufacture, manufactures } = useManufacture();
 	const { isLoading: isLoadingMaterial, materials } = useMaterial();
 	const { isLoading: isLoadingSize, sizes } = useSize();
 	const { isLoading: isLoadingType, types } = useType();
 
 	const isLoading =
-		isLoadingCategory ||
-		isLoadingInventory ||
-		isLoadingManufacture ||
-		isLoadingMaterial ||
-		isLoadingSize ||
-		isLoadingType;
-
-	const [isWeightPerPieceFilled, setIsWeightPerPieceFilled] = useState(false);
+		isLoadingCategory || isLoadingManufacture || isLoadingMaterial || isLoadingSize || isLoadingType;
 
 	const { isCreating, createItem } = useCreateItem();
 
-	const { register, handleSubmit, reset, getValues, setValue, formState } = useForm();
+	const { register, handleSubmit, reset, formState } = useForm();
 
 	const { errors } = formState;
 
@@ -51,23 +42,6 @@ function CreateItemForm({ onCloseModal }) {
 
 	function onError(errors) {
 		console.log(errors);
-	}
-
-	function handleWeightChange(e) {
-		const weightValue = e.target.value;
-		setIsWeightPerPieceFilled(weightValue === '' ? false : true);
-	}
-
-	function handleKiloChange(e) {
-		const kilo = parseFloat(e.target.value);
-		const numberOfPieces = kilo ? kilo / getValues('weightPerPiece') : '';
-		setValue('numberOfPieces', numberOfPieces);
-	}
-
-	function handleNumberOfPiecesChange(e) {
-		const numberOfPieces = parseInt(e.target.value);
-		const kilo = numberOfPieces ? numberOfPieces * getValues('weightPerPiece') : '';
-		setValue('kilo', kilo);
 	}
 
 	if (isLoading) return <Spinner />;
@@ -119,6 +93,7 @@ function CreateItemForm({ onCloseModal }) {
 				<Input
 					type='number'
 					id='pricePerKilo'
+					step='any' // Allows for decimal numbers
 					disabled={isCreating}
 					{...register('pricePerKilo', {
 						required: 'This field is required',
@@ -129,42 +104,11 @@ function CreateItemForm({ onCloseModal }) {
 				<Input
 					type='number'
 					id='weightPerPiece'
+					step='any' // Allows for decimal numbers
 					disabled={isCreating}
 					{...register('weightPerPiece', {
 						required: 'This field is required',
 					})}
-					onChange={handleWeightChange}
-				/>
-			</FormRow>
-
-			<FormRow label='عدد القطع' error={errors?.numberOfPieces?.message}>
-				<Input
-					type='number'
-					id='numberOfPieces'
-					disabled={isCreating || !isWeightPerPieceFilled}
-					{...register('numberOfPieces', {
-						required: 'This field is required',
-					})}
-					onChange={handleNumberOfPiecesChange}
-				/>
-			</FormRow>
-			<FormRow label='وزن القطع' error={errors?.kilo?.message}>
-				<Input
-					type='number'
-					id='kilo'
-					disabled={isCreating || !isWeightPerPieceFilled}
-					{...register('kilo', {
-						required: 'This field is required',
-					})}
-					onChange={handleKiloChange}
-				/>
-			</FormRow>
-			<FormRow label='المخزن' error={errors?.inventoryId?.message}>
-				<SelectForm
-					options={inventories.map((inventory) => ({ value: inventory.id, label: inventory.location }))}
-					register={register}
-					type='white'
-					name='inventoryId' // Make sure to provide a name for the select element
 				/>
 			</FormRow>
 

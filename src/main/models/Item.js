@@ -4,77 +4,62 @@ async function createItem({
 	categoryId,
 	typeId,
 	sizeId,
-	inventoryId,
 	manufactureId,
 	materialId,
 	weightPerPiece,
 	pricePerKilo,
-	numberOfPieces,
 }) {
-	const numberOfItems = Number(numberOfPieces);
 	const weightOfItem = Number(weightPerPiece);
 	try {
 		await sequelize.sync();
-		// Find associated Category, Type, Size, and Inventory records
+		// Find associated Category, Type, Size, Manufacture, and Material records
 		const category = await Category.findByPk(categoryId);
 		const type = await Type.findByPk(typeId);
 		const size = await Size.findByPk(sizeId);
-		const inventory = await Inventory.findByPk(inventoryId);
 		const manufacture = await Manufacture.findByPk(manufactureId);
 		const material = await Material.findByPk(materialId);
 
-		if (!category || !type || !size || !inventory || !manufacture || !material) {
+		if (!category || !type || !size || !manufacture || !material) {
 			return { error: 'Invalid data' };
 		}
 
-		// Concatenate IDs to create a unique item ID
-		const itemId = `${categoryId}-${typeId}-${sizeId}-${materialId}-${manufactureId}-${inventoryId}`;
+		// Fetch all inventories
+		const inventories = await Inventory.findAll();
 
-		// Calculate the total weight of the new items
-		const totalWeight = weightOfItem * numberOfItems;
+		for (const inventory of inventories) {
+			// Concatenate IDs to create a unique item ID including the inventory ID
+			const itemId = `${categoryId}-${typeId}-${sizeId}-${materialId}-${manufactureId}-${inventory.id}`;
 
-		// Check if adding the new items will exceed the maxCapacity of the inventory
-		if (inventory.currentCapacity + totalWeight > inventory.maxCapacity) {
-			return { error: `Adding the new items will exceed the maxCapacity of the inventory` };
+			// Check if an item with the same ID already exists in the current inventory
+			const existingItem = await Item.findByPk(itemId);
+
+			if (existingItem) {
+				// If the item exists in any inventory, return an error
+				return { error: `Item already exists in inventory ${inventory.id}` };
+			}
 		}
 
-		// Check if an item with the same characteristics already exists
-		const existingItem = await Item.findByPk(itemId);
-
-		if (existingItem) {
-			// If the item exists, update the numberOfPieces
-			existingItem.numberOfPieces += numberOfItems;
-			await existingItem.save();
-
-			// Update the currentCapacity of the inventory
-			inventory.currentCapacity += totalWeight;
-			await inventory.save();
-
-			return { error: null };
+		// Create the Item record with associations for each inventory
+		for (const inventory of inventories) {
+			const itemId = `${categoryId}-${typeId}-${sizeId}-${materialId}-${manufactureId}-${inventory.id}`;
+			await Item.create({
+				id: itemId, // Set the unique item ID
+				weightPerPiece: weightOfItem,
+				pricePerKilo,
+				numberOfPieces: 0, // Set numberOfPieces to 0
+				CategoryId: categoryId,
+				TypeId: typeId,
+				SizeId: sizeId,
+				ManufactureId: manufactureId,
+				InventoryId: inventory.id,
+				MaterialId: materialId,
+			});
 		}
-
-		// Create the Item record with associations
-		await Item.create({
-			id: itemId, // Set the unique item ID
-			weightPerPiece: weightOfItem,
-			pricePerKilo,
-			numberOfPieces: numberOfItems,
-			CategoryId: categoryId,
-			TypeId: typeId,
-			SizeId: sizeId,
-			ManufactureId: manufactureId,
-			InventoryId: inventoryId,
-			MaterialId: materialId,
-		});
-
-		// Update the currentCapacity of the inventory
-		inventory.currentCapacity += totalWeight;
-		await inventory.save();
 
 		return { error: null };
 	} catch (error) {
 		console.log(error);
-		return { error: error };
+		return { error: error.message };
 	}
 }
 
@@ -270,33 +255,46 @@ async function transferItems({ id, amount, inventoryId }) {
 async function deleteItemById({ id }) {
 	try {
 		await sequelize.sync();
-		// Find the item by its ID
-		const item = await Item.findByPk(id);
+		// Extract the components of the item ID
+		const [categoryId, typeId, sizeId, materialId, manufactureId] = id.split('-');
 
-		if (!item) {
+		// Find all items with matching characteristics across all inventories
+		const items = await Item.findAll({
+			where: {
+				CategoryId: categoryId,
+				TypeId: typeId,
+				SizeId: sizeId,
+				MaterialId: materialId,
+				ManufactureId: manufactureId,
+			},
+		});
+
+		if (!items || items.length === 0) {
 			return { error: `Item not found` };
 		}
 
-		// Get the associated inventory ID and weight per piece
-		const { InventoryId, weightPerPiece } = item;
+		for (const item of items) {
+			// Get the associated inventory ID and weight per piece
+			const { InventoryId, weightPerPiece } = item;
 
-		// Calculate the total weight of the item
-		const totalWeight = weightPerPiece * item.numberOfPieces;
+			// Calculate the total weight of the item
+			const totalWeight = weightPerPiece * item.numberOfPieces;
 
-		// Retrieve the corresponding inventory record
-		const inventory = await Inventory.findByPk(InventoryId);
+			// Retrieve the corresponding inventory record
+			const inventory = await Inventory.findByPk(InventoryId);
 
-		if (!inventory) {
-			console.error(`Inventory with ID ${InventoryId} not found.`);
-			return { error: `Inventory not found` };
+			if (!inventory) {
+				console.error(`Inventory with ID ${InventoryId} not found.`);
+				return { error: `Inventory not found` };
+			}
+
+			// Update the current capacity of the inventory
+			inventory.currentCapacity -= totalWeight;
+			await inventory.save();
+
+			// Delete the item
+			await item.destroy();
 		}
-
-		// Update the current capacity of the inventory
-		inventory.currentCapacity -= totalWeight;
-		await inventory.save();
-
-		// Delete the item
-		await item.destroy();
 
 		return { error: null };
 	} catch (error) {
@@ -307,17 +305,62 @@ async function deleteItemById({ id }) {
 async function updatePrice({ id, pricePerKilo, numberOfPieces, weightPerPiece }) {
 	try {
 		await sequelize.sync();
-		const item = await Item.findByPk(id);
-		if (!item) return { error: `Can not find item to update price` };
+		// Extract the components of the item ID including the InventoryId
+		const [categoryId, typeId, sizeId, materialId, manufactureId, inventoryId] = id.split('-');
 
-		item.pricePerKilo = pricePerKilo;
-		item.numberOfPieces = numberOfPieces;
-		item.weightPerPiece = weightPerPiece;
+		// Find the specific item to update its numberOfPieces and current capacity
+		const itemToUpdate = await Item.findByPk(id);
 
-		await item.save();
+		if (!itemToUpdate) {
+			return { error: `Cannot find item with ID ${id} to update number of pieces` };
+		}
+
+		// Calculate the difference in weight due to the change in number of pieces
+		const oldTotalWeight = itemToUpdate.numberOfPieces * itemToUpdate.weightPerPiece;
+		const newTotalWeight = numberOfPieces * weightPerPiece;
+		const weightDifference = newTotalWeight - oldTotalWeight;
+
+		// Update the numberOfPieces for the specified item
+		itemToUpdate.numberOfPieces = numberOfPieces;
+		await itemToUpdate.save();
+
+		// Find the relevant inventory
+		const inventoryToUpdate = await Inventory.findByPk(inventoryId);
+
+		if (!inventoryToUpdate) {
+			return { error: `Cannot find inventory with ID ${inventoryId} to update capacity` };
+		}
+
+		// Update the currentCapacity for the inventory
+		inventoryToUpdate.currentCapacity += weightDifference;
+		await inventoryToUpdate.save();
+
+		// Find all items with matching characteristics across all inventories
+		const itemsToUpdate = await Item.findAll({
+			where: {
+				CategoryId: categoryId,
+				TypeId: typeId,
+				SizeId: sizeId,
+				MaterialId: materialId,
+				ManufactureId: manufactureId,
+			},
+		});
+
+		if (!itemsToUpdate || itemsToUpdate.length === 0) {
+			return { error: `Cannot find items to update price and weight` };
+		}
+
+		// Update the pricePerKilo and weightPerPiece for all matching items
+		for (const item of itemsToUpdate) {
+			item.pricePerKilo = pricePerKilo;
+			item.weightPerPiece = weightPerPiece;
+			await item.save();
+		}
+
 		return { error: null };
 	} catch (error) {
-		return { error: 'Price did not update' };
+		console.error('Error updating item:', error);
+		return { error: 'Price and weight did not update' };
 	}
 }
 

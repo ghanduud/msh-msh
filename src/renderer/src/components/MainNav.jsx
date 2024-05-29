@@ -6,6 +6,8 @@ import { GiMaterialsScience } from 'react-icons/gi';
 import { BiCategoryAlt } from 'react-icons/bi';
 import { IoMdResize } from 'react-icons/io';
 import { FiType } from 'react-icons/fi';
+import { MdOutlineBorderColor } from 'react-icons/md';
+import { RiBillLine } from 'react-icons/ri';
 
 const NavList = styled.ul`
 	display: flex;
@@ -102,6 +104,18 @@ function MainNav() {
 					<StyledNavLink to='/materials'>
 						<GiMaterialsScience />
 						<span>الخامات</span>
+					</StyledNavLink>
+				</li>
+				<li>
+					<StyledNavLink to='/outOrders'>
+						<RiBillLine />
+						<span>طلبيات البيع</span>
+					</StyledNavLink>
+				</li>
+				<li>
+					<StyledNavLink to='/createOutOrder'>
+						<MdOutlineBorderColor />
+						<span>طلب بيع</span>
 					</StyledNavLink>
 				</li>
 			</NavList>

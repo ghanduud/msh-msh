@@ -7,6 +7,7 @@ const filterState = {
 	materialFilter: '',
 	sizeFilter: '',
 	typeFilter: '',
+	hideZeros: false,
 };
 
 const filterSlice = createSlice({
@@ -31,6 +32,9 @@ const filterSlice = createSlice({
 		setTypeFilter(state, action) {
 			state.typeFilter = action.payload;
 		},
+		setHideZeros(state, action) {
+			state.hideZeros = action.payload;
+		},
 		resetFilters(state) {
 			state.categoryFilter = '';
 			state.inventoryFilter = '';
@@ -38,6 +42,7 @@ const filterSlice = createSlice({
 			state.materialFilter = '';
 			state.sizeFilter = '';
 			state.typeFilter = '';
+			state.hideZeros = false;
 		},
 	},
 });
@@ -50,6 +55,7 @@ export const {
 	setSizeFilter,
 	setTypeFilter,
 	resetFilters,
+	setHideZeros,
 } = filterSlice.actions;
 
 export default filterSlice.reducer;

@@ -26,3 +26,9 @@ export const getToday = function (options = {}) {
 
 export const formatCurrency = (value) =>
 	new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(value);
+
+export function formatDateString(date) {
+	if (!date) return '-';
+	const formattedDate = new Date(date).toLocaleString(); // Format date string as per locale
+	return formattedDate;
+}

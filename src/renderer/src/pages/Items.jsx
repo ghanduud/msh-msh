@@ -9,12 +9,14 @@ function Items() {
 		<>
 			<Row type='horizontal'>
 				<Heading as='h1'>البضائع</Heading>
+			</Row>
+			<Row type='horizontal'>
+				<AddItem />
 				<ItemOperations />
 			</Row>
 
 			<Row>
 				<ItemTable />
-				<AddItem />
 			</Row>
 		</>
 	);

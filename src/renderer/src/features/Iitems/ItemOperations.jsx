@@ -9,6 +9,7 @@ import SizeFilter from './SizeFilter';
 import TypeFilter from './TypeFilter';
 import { resetFilters } from './filterSlice';
 import styled from 'styled-components';
+import HideZerosCheck from './HideZerosCheck';
 
 const ResetButton = styled(Button)`
 	align-self: end;
@@ -25,6 +26,7 @@ function ItemOperations() {
 	return (
 		<TableOperations>
 			<ResetButton onClick={handleReset}>إعادة ضبط</ResetButton>
+			<HideZerosCheck />
 			<CategoryFilter />
 			<MaterialFilter />
 			<TypeFilter />

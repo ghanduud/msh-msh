@@ -98,11 +98,11 @@ export const Item = sequelize.define('Item', {
 		primaryKey: true,
 	},
 	weightPerPiece: {
-		type: DataTypes.INTEGER,
+		type: DataTypes.DOUBLE,
 		allowNull: false,
 	},
 	pricePerKilo: {
-		type: DataTypes.INTEGER,
+		type: DataTypes.DOUBLE,
 		allowNull: false,
 	},
 	numberOfPieces: {
@@ -116,3 +116,63 @@ Item.belongsTo(Size);
 Item.belongsTo(Material);
 Item.belongsTo(Manufacture);
 Item.belongsTo(Inventory);
+
+export const SellItem = sequelize.define('SellItem', {
+	id: {
+		type: DataTypes.STRING, // Composite ID
+		primaryKey: true,
+	},
+	totalPrice: {
+		type: DataTypes.DOUBLE,
+		allowNull: false,
+	},
+	numberOfPieces: {
+		type: DataTypes.INTEGER,
+	},
+	totalWeight: {
+		type: DataTypes.DOUBLE,
+	},
+});
+
+// Define the OutOrder model
+export const OutOrder = sequelize.define('OutOrder', {
+	id: {
+		type: DataTypes.INTEGER,
+		primaryKey: true,
+		autoIncrement: true,
+	},
+	customerName: {
+		type: DataTypes.STRING,
+		allowNull: false,
+	},
+	customerPhone: {
+		type: DataTypes.STRING,
+		allowNull: false,
+	},
+	status: {
+		type: DataTypes.STRING,
+		allowNull: false,
+	},
+	confirmDate: {
+		type: DataTypes.DATE,
+	},
+	totalPrice: {
+		type: DataTypes.DOUBLE,
+		allowNull: false,
+	},
+	discount: {
+		type: DataTypes.DOUBLE,
+	},
+});
+
+// Define associations
+OutOrder.hasMany(SellItem);
+SellItem.belongsTo(OutOrder);
+
+// Define associations between SellItem and other models
+SellItem.belongsTo(Category);
+SellItem.belongsTo(Type);
+SellItem.belongsTo(Size);
+SellItem.belongsTo(Material);
+SellItem.belongsTo(Manufacture);
+SellItem.belongsTo(Inventory);

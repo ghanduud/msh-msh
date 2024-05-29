@@ -66,9 +66,9 @@ function ItemRow({ item }) {
 	return (
 		<Table.Row>
 			<Cell>{category}</Cell>
-			<Cell>{material}</Cell>
 			<Cell>{type}</Cell>
 			<Cell>{size}</Cell>
+			<Cell>{material}</Cell>
 			<Cell>{manufacture}</Cell>
 			<Cell>{pricePerKilo}</Cell>
 			<Cell>{weightPerPiece}</Cell>

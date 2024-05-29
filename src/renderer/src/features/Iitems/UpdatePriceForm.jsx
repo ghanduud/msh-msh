@@ -35,13 +35,25 @@ function UpdatePriceForm({ itemPriceToUpdate, onCloseModal }) {
 	return (
 		<Form onSubmit={handleSubmit(onSubmit, onError)} type={onCloseModal ? 'Modal' : 'reguler'}>
 			<FormRow label='السعر الجديد' error={errors?.pricePerKilo?.message}>
-				<Input type='number' id='pricePerKilo' disabled={isUpdating} {...register('pricePerKilo')} />
+				<Input
+					type='number'
+					id='pricePerKilo'
+					step='any'
+					disabled={isUpdating}
+					{...register('pricePerKilo')}
+				/>
 			</FormRow>
-			<FormRow label='العدد الجديد' error={errors?.pricePerKilo?.message}>
+			<FormRow label='العدد الجديد' error={errors?.numberOfPieces?.message}>
 				<Input type='number' id='numberOfPieces' disabled={isUpdating} {...register('numberOfPieces')} />
 			</FormRow>
-			<FormRow label='الوزن الجديد' error={errors?.pricePerKilo?.message}>
-				<Input type='number' id='weightPerPiece' disabled={isUpdating} {...register('weightPerPiece')} />
+			<FormRow label='الوزن الجديد' error={errors?.weightPerPiece?.message}>
+				<Input
+					type='number'
+					id='weightPerPiece'
+					step='any'
+					disabled={isUpdating}
+					{...register('weightPerPiece')}
+				/>
 			</FormRow>
 			<FormRow>
 				<Button variation='secondary' type='reset' onClick={() => onCloseModal?.()}>
