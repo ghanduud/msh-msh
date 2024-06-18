@@ -1,59 +1,52 @@
 import { Item, sequelize, Manufacture, Category, Type, Size, Inventory, Material } from './sqlite';
 
-async function createItem({
-	categoryId,
-	typeId,
-	sizeId,
-	manufactureId,
-	materialId,
-	weightPerPiece,
-	pricePerKilo,
-}) {
+async function createItem({ categoryId, typeId, sizeId, materialId, weightPerPiece, pricePerKilo }) {
 	const weightOfItem = Number(weightPerPiece);
 	try {
 		await sequelize.sync();
-		// Find associated Category, Type, Size, Manufacture, and Material records
+
+		// Find associated Category, Type, Size, and Material records
 		const category = await Category.findByPk(categoryId);
 		const type = await Type.findByPk(typeId);
 		const size = await Size.findByPk(sizeId);
-		const manufacture = await Manufacture.findByPk(manufactureId);
 		const material = await Material.findByPk(materialId);
 
-		if (!category || !type || !size || !manufacture || !material) {
+		if (!category || !type || !size || !material) {
 			return { error: 'Invalid data' };
 		}
 
-		// Fetch all inventories
+		// Fetch all inventories and all manufactures
 		const inventories = await Inventory.findAll();
+		const manufactures = await Manufacture.findAll();
 
+		// Iterate through all combinations of inventories and manufactures
 		for (const inventory of inventories) {
-			// Concatenate IDs to create a unique item ID including the inventory ID
-			const itemId = `${categoryId}-${typeId}-${sizeId}-${materialId}-${manufactureId}-${inventory.id}`;
+			for (const manufacture of manufactures) {
+				// Concatenate IDs to create a unique item ID including the inventory and manufacture ID
+				const itemId = `${categoryId}-${typeId}-${sizeId}-${materialId}-${manufacture.id}-${inventory.id}`;
 
-			// Check if an item with the same ID already exists in the current inventory
-			const existingItem = await Item.findByPk(itemId);
+				// Check if an item with the same ID already exists in the current inventory
+				const existingItem = await Item.findByPk(itemId);
 
-			if (existingItem) {
-				// If the item exists in any inventory, return an error
-				return { error: `Item already exists in inventory ${inventory.id}` };
+				if (existingItem) {
+					return { error: 'Item excist already' };
+				}
+
+				// Create the Item record with associations for each combination of inventory and manufacture
+				await Item.create({
+					id: itemId, // Set the unique item ID
+					weightPerPiece: weightOfItem,
+					pricePerKilo,
+					numberOfPieces: 0, // Set numberOfPieces to 0
+					CategoryId: categoryId,
+					TypeId: typeId,
+					SizeId: sizeId,
+					ManufactureId: manufacture.id,
+					InventoryId: inventory.id,
+					MaterialId: materialId,
+					note: '',
+				});
 			}
-		}
-
-		// Create the Item record with associations for each inventory
-		for (const inventory of inventories) {
-			const itemId = `${categoryId}-${typeId}-${sizeId}-${materialId}-${manufactureId}-${inventory.id}`;
-			await Item.create({
-				id: itemId, // Set the unique item ID
-				weightPerPiece: weightOfItem,
-				pricePerKilo,
-				numberOfPieces: 0, // Set numberOfPieces to 0
-				CategoryId: categoryId,
-				TypeId: typeId,
-				SizeId: sizeId,
-				ManufactureId: manufactureId,
-				InventoryId: inventory.id,
-				MaterialId: materialId,
-			});
 		}
 
 		return { error: null };
@@ -102,6 +95,7 @@ async function getAllItemsWithDetails() {
 			weightPerPiece: item.weightPerPiece,
 			pricePerKilo: item.pricePerKilo,
 			numberOfPieces: item.numberOfPieces,
+			note: item.note,
 			manufacture: item.Manufacture ? item.Manufacture.name : null,
 			category: item.Category ? item.Category.name : null,
 			type: item.Type ? item.Type.name : null,
@@ -302,7 +296,7 @@ async function deleteItemById({ id }) {
 	}
 }
 
-async function updatePrice({ id, pricePerKilo, numberOfPieces, weightPerPiece }) {
+async function updatePrice({ id, pricePerKilo, numberOfPieces, weightPerPiece, note }) {
 	try {
 		await sequelize.sync();
 		// Extract the components of the item ID including the InventoryId
@@ -322,6 +316,7 @@ async function updatePrice({ id, pricePerKilo, numberOfPieces, weightPerPiece })
 
 		// Update the numberOfPieces for the specified item
 		itemToUpdate.numberOfPieces = numberOfPieces;
+		itemToUpdate.note = note;
 		await itemToUpdate.save();
 
 		// Find the relevant inventory

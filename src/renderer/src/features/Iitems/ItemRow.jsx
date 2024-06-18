@@ -58,6 +58,7 @@ function ItemRow({ item }) {
 		size,
 		type,
 		weightPerPiece,
+		note,
 	} = item;
 
 	const totalWeight = numberOfPieces * weightPerPiece;
@@ -70,11 +71,10 @@ function ItemRow({ item }) {
 			<Cell>{size}</Cell>
 			<Cell>{material}</Cell>
 			<Cell>{manufacture}</Cell>
-			<Cell>{pricePerKilo}</Cell>
 			<Cell>{weightPerPiece}</Cell>
 			<NumberOfPiecesCell pieces={numberOfPieces}>{numberOfPieces}</NumberOfPiecesCell>
 			<Cell>{totalWeight}</Cell>
-			<Cell>{totalPrice}</Cell>
+			<Cell>{note}</Cell>
 			<Cell>{inventoryLocation}</Cell>
 			<Toggle>
 				<Modal>

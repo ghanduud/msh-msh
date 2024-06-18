@@ -108,6 +108,9 @@ export const Item = sequelize.define('Item', {
 	numberOfPieces: {
 		type: DataTypes.INTEGER,
 	},
+	note: {
+		type: DataTypes.STRING,
+	},
 });
 
 Item.belongsTo(Category);

@@ -55,10 +55,14 @@ function UpdatePriceForm({ itemPriceToUpdate, onCloseModal }) {
 					{...register('weightPerPiece')}
 				/>
 			</FormRow>
+			<FormRow label='ملاحظة' error={errors?.weightPerPiece?.message}>
+				<Input type='text' id='note' disabled={isUpdating} {...register('note')} />
+			</FormRow>
 			<FormRow>
 				<Button variation='secondary' type='reset' onClick={() => onCloseModal?.()}>
 					الغاء
 				</Button>
+
 				<Button disabled={isUpdating}>تغيير</Button>
 			</FormRow>
 		</Form>

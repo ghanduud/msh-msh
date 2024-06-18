@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { useCreateItem } from './useCreateItem';
 import { useCategory } from '../category/useCategory';
 
-import { useManufacture } from '../manufacture/useManufacture';
 import { useMaterial } from '../material/useMaterial';
 import { useSize } from '../size/useSize';
 import { useType } from '../type/useType';
@@ -17,13 +16,12 @@ import Button from '../../components/Button';
 
 function CreateItemForm({ onCloseModal }) {
 	const { isLoading: isLoadingCategory, categories } = useCategory();
-	const { isLoading: isLoadingManufacture, manufactures } = useManufacture();
+
 	const { isLoading: isLoadingMaterial, materials } = useMaterial();
 	const { isLoading: isLoadingSize, sizes } = useSize();
 	const { isLoading: isLoadingType, types } = useType();
 
-	const isLoading =
-		isLoadingCategory || isLoadingManufacture || isLoadingMaterial || isLoadingSize || isLoadingType;
+	const isLoading = isLoadingCategory || isLoadingMaterial || isLoadingSize || isLoadingType;
 
 	const { isCreating, createItem } = useCreateItem();
 
@@ -81,14 +79,6 @@ function CreateItemForm({ onCloseModal }) {
 				/>
 			</FormRow>
 
-			<FormRow label='المصنع' error={errors?.manufactureId?.message}>
-				<SelectForm
-					options={manufactures.map((manufacture) => ({ value: manufacture.id, label: manufacture.name }))}
-					register={register}
-					type='white'
-					name='manufactureId' // Make sure to provide a name for the select element
-				/>
-			</FormRow>
 			<FormRow label='سعر الكيلو' error={errors?.pricePerKilo?.message}>
 				<Input
 					type='number'

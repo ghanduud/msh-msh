@@ -83,7 +83,7 @@ function OutOrderDetails() {
 					</Button>
 				)}
 
-				{status === 'confirmed' && <Button icon={<HiArrowUpOnSquare />}>استرجاع</Button>}
+				{/* {status === 'confirmed' && <Button icon={<HiArrowUpOnSquare />}>استرجاع</Button>} */}
 
 				<Modal>
 					<Modal.Open opens='delete'>

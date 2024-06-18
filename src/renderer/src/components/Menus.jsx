@@ -57,7 +57,7 @@ const StyledButton = styled.button`
 		${({ menutype }) =>
 			menutype === 'delete'
 				? css`
-						background-color: var(--color-red-700);
+						background-color: var(--color-red-100);
 						color: var(--color-grey-800);
 					`
 				: css`
@@ -84,7 +84,7 @@ const StyledButton = styled.button`
 	${({ menutype }) =>
 		menutype === 'delete'
 			? css`
-					background-color: var(--color-red-800);
+					background-color: var(--color-red-700);
 				`
 			: ''}
 `;
