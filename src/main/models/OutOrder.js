@@ -8,6 +8,7 @@ import {
 	Inventory,
 	Material,
 	Manufacture,
+	Standerd,
 	Item,
 } from './sqlite';
 
@@ -56,7 +57,7 @@ async function getOutOrderById(orderId) {
 			include: [
 				{
 					model: SellItem,
-					include: [Category, Type, Size, Material, Manufacture, Inventory],
+					include: [Category, Type, Size, Material, Standerd, Manufacture, Inventory],
 				},
 			],
 		});
@@ -86,6 +87,7 @@ async function getOutOrderById(orderId) {
 				type: sellItem.Type.name,
 				size: sellItem.Size.name,
 				material: sellItem.Material.name,
+				standerd: sellItem.Standerd.name,
 				manufacture: sellItem.Manufacture.name,
 				inventory: sellItem.Inventory.location,
 			})),
@@ -122,6 +124,7 @@ async function createOrder({ customerName, customerPhone, totalPrice, discount, 
 						type,
 						size,
 						material,
+						standerd,
 						manufacture,
 						inventory,
 						numberOfPieces,
@@ -129,7 +132,7 @@ async function createOrder({ customerName, customerPhone, totalPrice, discount, 
 						totalPrice: sellItemTotalPrice,
 					} = sellItem;
 
-					const sellItemId = `${order.id}-${category}-${type}-${size}-${material}-${manufacture}-${inventory}`;
+					const sellItemId = `${order.id}-${category}-${type}-${size}-${material}-${standerd}-${manufacture}-${inventory}`;
 
 					await SellItem.create(
 						{
@@ -142,6 +145,7 @@ async function createOrder({ customerName, customerPhone, totalPrice, discount, 
 							TypeId: type,
 							SizeId: size,
 							MaterialId: material,
+							StanderdId: standerd,
 							ManufactureId: manufacture,
 							InventoryId: inventory,
 						},
@@ -205,12 +209,12 @@ async function confirmOutOrder({ orderId }) {
 			// Iterate through each sell item
 			for (const sellItem of order.SellItems) {
 				// Access SellItems directly from order object
-				const { CategoryId, TypeId, SizeId, MaterialId, ManufactureId, InventoryId, numberOfPieces } =
+				const { CategoryId, TypeId, SizeId, MaterialId, StanderdId, ManufactureId, InventoryId, numberOfPieces } =
 					sellItem;
 
 				// Construct composite IDs
-				const sellItemId = `${order.id}-${CategoryId}-${TypeId}-${SizeId}-${MaterialId}-${ManufactureId}-${InventoryId}`;
-				const itemId = `${CategoryId}-${TypeId}-${SizeId}-${MaterialId}-${ManufactureId}-${InventoryId}`;
+				const sellItemId = `${order.id}-${CategoryId}-${TypeId}-${SizeId}-${MaterialId}-${StanderdId}-${ManufactureId}-${InventoryId}`;
+				const itemId = `${CategoryId}-${TypeId}-${SizeId}-${MaterialId}-${StanderdId}-${ManufactureId}-${InventoryId}`;
 
 				// Find the corresponding item in the inventory
 				const inventoryItem = await Item.findByPk(itemId, { transaction });

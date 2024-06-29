@@ -10,7 +10,7 @@ function TypesTable() {
 	const { isLoading, types } = useType();
 
 	if (isLoading) return <Spinner />;
-	if (!types?.length) return <Empty resourceName='Types' />;
+	if (!types?.length) return <Empty resourceName='انواع' />;
 
 	return (
 		<Menus>

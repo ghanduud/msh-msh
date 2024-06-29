@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { HiOutlineBuildingOffice, HiOutlineHome, HiOutlineTableCells } from 'react-icons/hi2';
+import { HiOutlineBuildingOffice, HiOutlineTableCells } from 'react-icons/hi2';
 import { LuFactory } from 'react-icons/lu';
 import { GiMaterialsScience } from 'react-icons/gi';
 import { BiCategoryAlt } from 'react-icons/bi';
 import { IoMdResize } from 'react-icons/io';
 import { FiType } from 'react-icons/fi';
-import { MdOutlineBorderColor } from 'react-icons/md';
+import { MdGppGood, MdOutlineBorderColor } from 'react-icons/md';
 import { RiBillLine } from 'react-icons/ri';
 
 const NavList = styled.ul`
@@ -104,6 +104,12 @@ function MainNav() {
 					<StyledNavLink to='/materials'>
 						<GiMaterialsScience />
 						<span>الخامات</span>
+					</StyledNavLink>
+				</li>
+				<li>
+					<StyledNavLink to='/standerds'>
+						<MdGppGood />
+						<span>المعايير</span>
 					</StyledNavLink>
 				</li>
 				<li>

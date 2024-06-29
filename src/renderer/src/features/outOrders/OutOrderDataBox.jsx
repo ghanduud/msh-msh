@@ -268,7 +268,8 @@ function OutOrderDataBox({ order, wrongeId }) {
 
 						{/* Pass wronge prop to Items component */}
 						<Items wrong={wrongeId === item.id}>
-							القطعة : {item.category} &nbsp; {item.type} &nbsp; {item.size} &nbsp; {item.material}
+							القطعة : {item.category} &nbsp; {item.type} &nbsp; {item.size} &nbsp; {item.material} &nbsp;
+							{item.standerd}
 						</Items>
 					</SellItem>
 				))}

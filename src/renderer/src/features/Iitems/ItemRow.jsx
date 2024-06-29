@@ -11,6 +11,9 @@ import { useDeleteItem } from './useDeleteItem';
 
 import ConfirmDelete from '../../components/ConfirmDelete';
 import UpdatePriceForm from './UpdatePriceForm';
+import { useDispatch } from 'react-redux';
+import { addSellItem } from '../outOrders/outOrderSlice';
+import { RiBillLine } from 'react-icons/ri';
 
 const Cell = styled.div`
 	padding: 1.3rem 2rem;
@@ -46,6 +49,7 @@ const Toggle = styled.div`
 
 function ItemRow({ item }) {
 	const { isDeleting, deleteItem } = useDeleteItem();
+	const dispatch = useDispatch();
 
 	const {
 		id: itemId,
@@ -54,15 +58,36 @@ function ItemRow({ item }) {
 		inventoryLocation,
 		manufacture,
 		numberOfPieces,
-		pricePerKilo,
+		// pricePerKilo,
 		size,
 		type,
+		standerd,
 		weightPerPiece,
 		note,
 	} = item;
 
 	const totalWeight = numberOfPieces * weightPerPiece;
-	const totalPrice = totalWeight * pricePerKilo;
+	// const totalPrice = totalWeight * pricePerKilo;
+
+	function handleAddSellItem(id) {
+		const [category, type, size, material, standerd, manufacture, inventory] = id.split('-');
+
+		const sellItem = {
+			category: category,
+			type: type,
+			size: size,
+			material: material,
+			standerd: standerd,
+			manufacture: manufacture,
+			inventory: inventory,
+			numberOfPieces: '',
+			totalWeight: 0,
+			totalPrice: 0,
+			correctItem: false,
+		};
+
+		dispatch(addSellItem(sellItem));
+	}
 
 	return (
 		<Table.Row>
@@ -70,6 +95,7 @@ function ItemRow({ item }) {
 			<Cell>{type}</Cell>
 			<Cell>{size}</Cell>
 			<Cell>{material}</Cell>
+			<Cell>{standerd}</Cell>
 			<Cell>{manufacture}</Cell>
 			<Cell>{weightPerPiece}</Cell>
 			<NumberOfPiecesCell pieces={numberOfPieces}>{numberOfPieces}</NumberOfPiecesCell>
@@ -88,6 +114,9 @@ function ItemRow({ item }) {
 							<Modal.Open opens='updatePrice'>
 								<Menus.Button icon={<HiPencil />}>تغيير </Menus.Button>
 							</Modal.Open>
+							<Menus.Button icon={<RiBillLine />} onClick={() => handleAddSellItem(itemId)}>
+								اضافة الي طلب
+							</Menus.Button>
 							<Modal.Open opens='delete'>
 								<Menus.Button menutype='delete' icon={<HiTrash />}>
 									مسح

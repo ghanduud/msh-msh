@@ -10,7 +10,7 @@ function CategoriesTable() {
 	const { isLoading, categories } = useCategory();
 
 	if (isLoading) return <Spinner />;
-	if (!categories?.length) return <Empty resourceName='Categories' />;
+	if (!categories?.length) return <Empty resourceName='اصناف' />;
 
 	return (
 		<Menus>

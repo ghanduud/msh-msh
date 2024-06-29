@@ -1,6 +1,14 @@
-import { Item, sequelize, Manufacture, Category, Type, Size, Inventory, Material } from './sqlite';
+import { Item, sequelize, Manufacture, Category, Type, Size, Inventory, Material, Standerd } from './sqlite';
 
-async function createItem({ categoryId, typeId, sizeId, materialId, weightPerPiece, pricePerKilo }) {
+async function createItem({
+	categoryId,
+	typeId,
+	sizeId,
+	materialId,
+	weightPerPiece,
+	pricePerKilo,
+	standerdId,
+}) {
 	const weightOfItem = Number(weightPerPiece);
 	try {
 		await sequelize.sync();
@@ -10,8 +18,9 @@ async function createItem({ categoryId, typeId, sizeId, materialId, weightPerPie
 		const type = await Type.findByPk(typeId);
 		const size = await Size.findByPk(sizeId);
 		const material = await Material.findByPk(materialId);
+		const standerd = await Standerd.findByPk(standerdId);
 
-		if (!category || !type || !size || !material) {
+		if (!category || !type || !size || !material || !standerd) {
 			return { error: 'Invalid data' };
 		}
 
@@ -23,7 +32,7 @@ async function createItem({ categoryId, typeId, sizeId, materialId, weightPerPie
 		for (const inventory of inventories) {
 			for (const manufacture of manufactures) {
 				// Concatenate IDs to create a unique item ID including the inventory and manufacture ID
-				const itemId = `${categoryId}-${typeId}-${sizeId}-${materialId}-${manufacture.id}-${inventory.id}`;
+				const itemId = `${categoryId}-${typeId}-${sizeId}-${materialId}-${standerdId}-${manufacture.id}-${inventory.id}`;
 
 				// Check if an item with the same ID already exists in the current inventory
 				const existingItem = await Item.findByPk(itemId);
@@ -41,6 +50,7 @@ async function createItem({ categoryId, typeId, sizeId, materialId, weightPerPie
 					CategoryId: categoryId,
 					TypeId: typeId,
 					SizeId: sizeId,
+					StanderdId: standerdId,
 					ManufactureId: manufacture.id,
 					InventoryId: inventory.id,
 					MaterialId: materialId,
@@ -86,6 +96,10 @@ async function getAllItemsWithDetails() {
 					model: Material,
 					attributes: ['name'],
 				},
+				{
+					model: Standerd,
+					attributes: ['name'],
+				},
 			],
 		});
 
@@ -102,6 +116,7 @@ async function getAllItemsWithDetails() {
 			size: item.Size ? item.Size.name : null,
 			inventoryLocation: item.Inventory ? item.Inventory.location : null,
 			material: item.Material ? item.Material.name : null,
+			standerd: item.Standerd ? item.Standerd.name : null,
 		}));
 
 		return { data: itemsWithDetails, error: null };
@@ -140,6 +155,10 @@ async function getItemWithDetailsById({ id }) {
 					model: Material,
 					attributes: ['name'],
 				},
+				{
+					model: Standerd,
+					attributes: ['name'],
+				},
 			],
 		});
 
@@ -159,7 +178,8 @@ async function transferItems({ id, amount, inventoryId }) {
 		await sequelize.sync();
 
 		// Split the ID into individual parts
-		const [categoryId, typeId, sizeId, materialId, manufactureId, originalInventoryId] = id.split('-');
+		const [categoryId, typeId, sizeId, materialId, standerdId, manufactureId, originalInventoryId] =
+			id.split('-');
 
 		// Check if transferring to the same inventory
 		if (originalInventoryId === inventoryId) {
@@ -173,10 +193,11 @@ async function transferItems({ id, amount, inventoryId }) {
 				TypeId: typeId,
 				SizeId: sizeId,
 				MaterialId: materialId,
+				StanderdId: standerdId,
 				ManufactureId: manufactureId,
 				InventoryId: originalInventoryId,
 			},
-			include: [Manufacture, Category, Type, Size, Inventory, Material],
+			include: [Manufacture, Category, Type, Size, Standerd, Inventory, Material],
 		});
 
 		if (!itemToTransfer) {
@@ -202,7 +223,7 @@ async function transferItems({ id, amount, inventoryId }) {
 		const [destinationItem] = await Item.findOrCreate({
 			where: {
 				// Use a new composite ID for the destination item
-				id: `${categoryId}-${typeId}-${sizeId}-${materialId}-${manufactureId}-${inventoryId}`,
+				id: `${categoryId}-${typeId}-${sizeId}-${materialId}-${standerdId}-${manufactureId}-${inventoryId}`,
 			},
 			defaults: {
 				weightPerPiece: itemToTransfer.weightPerPiece,
@@ -214,6 +235,7 @@ async function transferItems({ id, amount, inventoryId }) {
 				SizeId: sizeId,
 				ManufactureId: manufactureId,
 				MaterialId: materialId,
+				StanderdId: standerdId,
 				InventoryId: inventoryId,
 			},
 		});
@@ -250,7 +272,7 @@ async function deleteItemById({ id }) {
 	try {
 		await sequelize.sync();
 		// Extract the components of the item ID
-		const [categoryId, typeId, sizeId, materialId, manufactureId] = id.split('-');
+		const [categoryId, typeId, sizeId, materialId, standerdId, manufactureId] = id.split('-');
 
 		// Find all items with matching characteristics across all inventories
 		const items = await Item.findAll({
@@ -259,6 +281,7 @@ async function deleteItemById({ id }) {
 				TypeId: typeId,
 				SizeId: sizeId,
 				MaterialId: materialId,
+				StanderdId: standerdId,
 				ManufactureId: manufactureId,
 			},
 		});
@@ -300,7 +323,7 @@ async function updatePrice({ id, pricePerKilo, numberOfPieces, weightPerPiece, n
 	try {
 		await sequelize.sync();
 		// Extract the components of the item ID including the InventoryId
-		const [categoryId, typeId, sizeId, materialId, manufactureId, inventoryId] = id.split('-');
+		const [categoryId, typeId, sizeId, materialId, standerdId, manufactureId, inventoryId] = id.split('-');
 
 		// Find the specific item to update its numberOfPieces and current capacity
 		const itemToUpdate = await Item.findByPk(id);
@@ -337,6 +360,7 @@ async function updatePrice({ id, pricePerKilo, numberOfPieces, weightPerPiece, n
 				TypeId: typeId,
 				SizeId: sizeId,
 				MaterialId: materialId,
+				StanderdId: standerdId,
 				ManufactureId: manufactureId,
 			},
 		});

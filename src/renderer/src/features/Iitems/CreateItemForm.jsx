@@ -6,6 +6,7 @@ import { useCategory } from '../category/useCategory';
 import { useMaterial } from '../material/useMaterial';
 import { useSize } from '../size/useSize';
 import { useType } from '../type/useType';
+import { useStanderd } from '../standerd/useStanderd';
 
 import Form from '../../components/Form';
 import FormRow from '../../components/FormRow';
@@ -20,8 +21,10 @@ function CreateItemForm({ onCloseModal }) {
 	const { isLoading: isLoadingMaterial, materials } = useMaterial();
 	const { isLoading: isLoadingSize, sizes } = useSize();
 	const { isLoading: isLoadingType, types } = useType();
+	const { isLoading: isLoadingStanderds, standerds } = useStanderd();
 
-	const isLoading = isLoadingCategory || isLoadingMaterial || isLoadingSize || isLoadingType;
+	const isLoading =
+		isLoadingCategory || isLoadingMaterial || isLoadingSize || isLoadingType || isLoadingStanderds;
 
 	const { isCreating, createItem } = useCreateItem();
 
@@ -68,6 +71,14 @@ function CreateItemForm({ onCloseModal }) {
 					register={register}
 					type='white'
 					name='typeId' // Make sure to provide a name for the select element
+				/>
+			</FormRow>
+			<FormRow label='المعيار' error={errors?.standerdId?.message}>
+				<SelectForm
+					options={standerds.map((standerd) => ({ value: standerd.id, label: standerd.name }))}
+					register={register}
+					type='white'
+					name='standerdId' // Make sure to provide a name for the select element
 				/>
 			</FormRow>
 			<FormRow label='المقاس' error={errors?.sizeId?.message}>

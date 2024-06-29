@@ -2,15 +2,15 @@ import Empty from '../../components/Empty';
 import Menus from '../../components/Menus';
 import Spinner from '../../components/Spinner';
 import Table from '../../components/Table';
-import MaterialRow from './MaterialRow';
+import StanderdRow from './StanderdRow';
 
-import { useMaterial } from './useMaterial';
+import { useStanderd } from './useStanderd';
 
-function MaterialTable() {
-	const { isLoading, materials } = useMaterial();
+function StanderdsTable() {
+	const { isLoading, standerds } = useStanderd();
 
 	if (isLoading) return <Spinner />;
-	if (!materials?.length) return <Empty resourceName='خامات' />;
+	if (!standerds?.length) return <Empty resourceName='معايير' />;
 
 	return (
 		<Menus>
@@ -21,12 +21,12 @@ function MaterialTable() {
 				</Table.Header>
 
 				<Table.Body
-					data={materials}
-					render={(material) => <MaterialRow material={material} key={material.id} />}
+					data={standerds}
+					render={(standerd) => <StanderdRow standerd={standerd} key={standerd.id} />}
 				/>
 			</Table>
 		</Menus>
 	);
 }
 
-export default MaterialTable;
+export default StanderdsTable;

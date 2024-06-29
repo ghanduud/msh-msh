@@ -26,6 +26,7 @@ async function createInventory({ location, maxCapacity }) {
 				'TypeId',
 				'SizeId',
 				'MaterialId',
+				'StanderdId',
 				'ManufactureId',
 				'weightPerPiece',
 				'pricePerKilo',
@@ -35,6 +36,7 @@ async function createInventory({ location, maxCapacity }) {
 				'TypeId',
 				'SizeId',
 				'MaterialId',
+				'StanderdId',
 				'ManufactureId',
 				'weightPerPiece',
 				'pricePerKilo',
@@ -43,9 +45,18 @@ async function createInventory({ location, maxCapacity }) {
 
 		// Create entries for each existing item in the new inventory with numberOfPieces set to 0
 		for (const item of items) {
-			const { CategoryId, TypeId, SizeId, MaterialId, ManufactureId, weightPerPiece, pricePerKilo } = item;
+			const {
+				CategoryId,
+				TypeId,
+				SizeId,
+				MaterialId,
+				StanderdId,
+				ManufactureId,
+				weightPerPiece,
+				pricePerKilo,
+			} = item;
 
-			const itemId = `${CategoryId}-${TypeId}-${SizeId}-${MaterialId}-${ManufactureId}-${newInventory.id}`;
+			const itemId = `${CategoryId}-${TypeId}-${SizeId}-${MaterialId}-${StanderdId}-${ManufactureId}-${newInventory.id}`;
 			await Item.create({
 				id: itemId, // Set the unique item ID
 				weightPerPiece: weightPerPiece,
@@ -57,6 +68,7 @@ async function createInventory({ location, maxCapacity }) {
 				ManufactureId: ManufactureId,
 				InventoryId: newInventory.id,
 				MaterialId: MaterialId,
+				StanderdId: StanderdId,
 			});
 		}
 

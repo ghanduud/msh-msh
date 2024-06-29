@@ -7,9 +7,11 @@ import ManufactureFilter from './ManufactureFilter';
 import MaterialFilter from './MaterialFilter';
 import SizeFilter from './SizeFilter';
 import TypeFilter from './TypeFilter';
+import StanderdFilter from './StanderdFilter';
 import { resetFilters } from './filterSlice';
 import styled from 'styled-components';
 import HideZerosCheck from './HideZerosCheck';
+import SortNumbers from './SortNumbers';
 
 const ResetButton = styled(Button)`
 	align-self: end;
@@ -26,11 +28,13 @@ function ItemOperations() {
 	return (
 		<TableOperations>
 			<ResetButton onClick={handleReset}>إعادة ضبط</ResetButton>
+			<SortNumbers />
 			<HideZerosCheck />
 			<CategoryFilter />
-			<MaterialFilter />
 			<TypeFilter />
 			<SizeFilter />
+			<MaterialFilter />
+			<StanderdFilter />
 			<ManufactureFilter />
 			<InventoryFilter />
 		</TableOperations>

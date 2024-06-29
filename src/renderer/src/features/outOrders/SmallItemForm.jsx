@@ -10,6 +10,7 @@ import {
 	setMaterialForItem,
 	setNumberOfPiecesForItem,
 	setSizeForItem,
+	setStanderdForItem,
 	setTotalPriceForItem,
 	setTotalWeightForItem,
 	setTypeForItem,
@@ -99,6 +100,7 @@ function SmallItemForm({
 	typeOptions,
 	sizesOptions,
 	materialsOptions,
+	standerdsOptions,
 	manufacturesOptions,
 	inventoriesOptions,
 	item,
@@ -111,6 +113,7 @@ function SmallItemForm({
 		item.type === '' ||
 		item.size === '' ||
 		item.material === '' ||
+		item.standerd === '' ||
 		item.manufacture === '' ||
 		item.inventory === ''
 			? false
@@ -121,7 +124,7 @@ function SmallItemForm({
 		items.find(
 			(i) =>
 				i.id ===
-				`${item.category}-${item.type}-${item.size}-${item.material}-${item.manufacture}-${item.inventory}`
+				`${item.category}-${item.type}-${item.size}-${item.material}-${item.standerd}-${item.manufacture}-${item.inventory}`
 		);
 
 	const weightPerPiece = filedsIsChoosen
@@ -190,6 +193,15 @@ function SmallItemForm({
 						value={item.material}
 						onChange={(e) => dispatch(setMaterialForItem({ id: item.itemId, material: e.target.value }))}
 						id='material'
+					/>
+				</FormCollection>
+				<FormCollection>
+					<label htmlFor='material'>المعيار</label>
+					<Select
+						options={standerdsOptions}
+						value={item.standerd}
+						onChange={(e) => dispatch(setStanderdForItem({ id: item.itemId, standerd: e.target.value }))}
+						id='standerd'
 					/>
 				</FormCollection>
 				<FormCollection>

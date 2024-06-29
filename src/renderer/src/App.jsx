@@ -13,6 +13,7 @@ import Materials from './pages/Materials';
 import Categories from './pages/Categories';
 import Sizes from './pages/Sizes';
 import Types from './pages/Types';
+import Standerds from './pages/Standerds';
 import OutOrders from './pages/OutOrders';
 import OutOrder from './pages/OutOrder';
 import CreateOutOrder from './pages/CreateOutOrder';
@@ -39,6 +40,7 @@ function App() {
 						<Route path='categories' element={<Categories />} />
 						<Route path='sizes' element={<Sizes />} />
 						<Route path='types' element={<Types />} />
+						<Route path='standerds' element={<Standerds />} />
 						<Route path='inventories' element={<Inventories />} />
 						<Route path='manufactures' element={<Manufactures />} />
 						<Route path='materials' element={<Materials />} />

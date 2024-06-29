@@ -10,7 +10,7 @@ function SizesTable() {
 	const { isLoading, sizes } = useSize();
 
 	if (isLoading) return <Spinner />;
-	if (!sizes?.length) return <Empty resourceName='Sizes' />;
+	if (!sizes?.length) return <Empty resourceName='مقاسات' />;
 
 	return (
 		<Menus>

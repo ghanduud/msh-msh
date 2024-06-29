@@ -91,6 +91,18 @@ export const Type = sequelize.define('Type', {
 	},
 });
 
+export const Standerd = sequelize.define('Standerd', {
+	id: {
+		type: DataTypes.INTEGER,
+		primaryKey: true,
+		autoIncrement: true,
+	},
+	name: {
+		type: DataTypes.STRING,
+		allowNull: false,
+	},
+});
+
 // Update the definition of the Item model to use a string ID
 export const Item = sequelize.define('Item', {
 	id: {
@@ -117,6 +129,7 @@ Item.belongsTo(Category);
 Item.belongsTo(Type);
 Item.belongsTo(Size);
 Item.belongsTo(Material);
+Item.belongsTo(Standerd);
 Item.belongsTo(Manufacture);
 Item.belongsTo(Inventory);
 
@@ -177,5 +190,6 @@ SellItem.belongsTo(Category);
 SellItem.belongsTo(Type);
 SellItem.belongsTo(Size);
 SellItem.belongsTo(Material);
+SellItem.belongsTo(Standerd);
 SellItem.belongsTo(Manufacture);
 SellItem.belongsTo(Inventory);

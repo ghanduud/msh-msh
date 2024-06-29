@@ -55,6 +55,13 @@ const outOrderSlice = createSlice({
 				sellItemToUpdate.material = material;
 			}
 		},
+		setStanderdForItem(state, action) {
+			const { id, standerd } = action.payload;
+			const sellItemToUpdate = state.sellItemArray.find((item) => item.itemId === id);
+			if (sellItemToUpdate) {
+				sellItemToUpdate.standerd = standerd;
+			}
+		},
 		setManufactureForItem(state, action) {
 			const { id, manufacture } = action.payload;
 			const sellItemToUpdate = state.sellItemArray.find((item) => item.itemId === id);
@@ -116,6 +123,7 @@ export const {
 	addSellItem,
 	setCategoryForItem,
 	setTypeForItem,
+	setStanderdForItem,
 	setSizeForItem,
 	setMaterialForItem,
 	setManufactureForItem,

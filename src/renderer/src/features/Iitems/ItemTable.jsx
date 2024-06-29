@@ -16,15 +16,15 @@ function ItemTable() {
 		inventoryFilter,
 		sizeFilter,
 		typeFilter,
+		standerdFilter,
 		manufactureFilter,
 		materialFilter,
 		hideZeros,
+		sortNumbers,
 	} = useSelector((store) => store.filter);
 
-	console.log(hideZeros);
-
 	if (isLoading) return <Spinner />;
-	if (!items?.length) return <Empty resourceName='Items' />;
+	if (!items?.length) return <Empty resourceName='بضائع' />;
 
 	let filteredItems = [...items];
 
@@ -34,6 +34,8 @@ function ItemTable() {
 		filteredItems = [...filteredItems.filter((item) => item.inventoryLocation === inventoryFilter)];
 	if (sizeFilter !== '') filteredItems = [...filteredItems.filter((item) => item.size === sizeFilter)];
 	if (typeFilter !== '') filteredItems = [...filteredItems.filter((item) => item.type === typeFilter)];
+	if (standerdFilter !== '')
+		filteredItems = [...filteredItems.filter((item) => item.standerd === standerdFilter)];
 	if (manufactureFilter !== '')
 		filteredItems = [...filteredItems.filter((item) => item.manufacture === manufactureFilter)];
 	if (materialFilter !== '')
@@ -55,14 +57,34 @@ function ItemTable() {
 		return 0;
 	});
 
+	// Sort the items based on sortNumbers and numberOfPieces
+	if (sortNumbers === 'asc') {
+		filteredItems.sort((a, b) => a.numberOfPieces - b.numberOfPieces);
+	} else if (sortNumbers === 'dec') {
+		filteredItems.sort((a, b) => b.numberOfPieces - a.numberOfPieces);
+	} else {
+		// Default sorting logic if sortNumbers is not 'asc' or 'dec'
+		filteredItems.sort((a, b) => {
+			const aComponents = a.id.split('-').map(Number);
+			const bComponents = b.id.split('-').map(Number);
+
+			for (let i = 0; i < aComponents.length; i++) {
+				if (aComponents[i] < bComponents[i]) return -1;
+				if (aComponents[i] > bComponents[i]) return 1;
+			}
+			return 0;
+		});
+	}
+
 	return (
 		<Menus>
-			<Table columns='0.8fr 0.8fr 1fr .5fr 1.2fr .8fr .8fr .8fr .8fr 0.8fr 0.1fr'>
+			<Table columns='0.8fr 0.8fr 1fr .5fr 1.2fr 0.8fr .8fr .8fr .8fr .8fr 0.8fr 0.1fr'>
 				<Table.Header>
 					<div>الصنف</div>
 					<div>النوع</div>
 					<div>المقاس</div>
 					<div>الخامة</div>
+					<div>المعيار</div>
 					<div>المصنع</div>
 					<div>وزن القطعة</div>
 					<div>عدد القطع</div>

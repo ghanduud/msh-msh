@@ -9,7 +9,7 @@ function InventoriesTable() {
 	const { isLoading, inventories } = useInventory();
 
 	if (isLoading) return <Spinner />;
-	if (!inventories?.length) return <Empty resourceName='Inventories' />;
+	if (!inventories?.length) return <Empty resourceName='مخازن' />;
 
 	return (
 		<Menus>

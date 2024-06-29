@@ -10,7 +10,7 @@ function ManufactureTable() {
 	const { isLoading, manufactures } = useManufacture();
 
 	if (isLoading) return <Spinner />;
-	if (!manufactures?.length) return <Empty resourceName='Manufactures' />;
+	if (!manufactures?.length) return <Empty resourceName='مصانع' />;
 
 	return (
 		<Menus>

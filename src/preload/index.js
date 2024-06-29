@@ -4,6 +4,7 @@ import { electronAPI } from '@electron-toolkit/preload';
 import { apiManufacture } from '../main/models/Manufacture';
 import { apiCategory } from '../main/models/Category';
 import { apiType } from '../main/models/Type';
+import { apiStanderd } from '../main/models/Standerd';
 import { apiSize } from '../main/models/Size';
 import { apiInventory } from '../main/models/Inventory';
 import { apiMaterial } from '../main/models/Material';
@@ -19,6 +20,7 @@ if (process.contextIsolated) {
 		contextBridge.exposeInMainWorld('apiManufacture', apiManufacture);
 		contextBridge.exposeInMainWorld('apiCategory', apiCategory);
 		contextBridge.exposeInMainWorld('apiType', apiType);
+		contextBridge.exposeInMainWorld('apiStanderd', apiStanderd);
 		contextBridge.exposeInMainWorld('apiSize', apiSize);
 		contextBridge.exposeInMainWorld('apiInventory', apiInventory);
 		contextBridge.exposeInMainWorld('apiMaterial', apiMaterial);

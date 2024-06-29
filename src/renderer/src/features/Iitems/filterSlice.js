@@ -7,6 +7,8 @@ const filterState = {
 	materialFilter: '',
 	sizeFilter: '',
 	typeFilter: '',
+	standerdFilter: '',
+	sortNumbers: '',
 	hideZeros: false,
 };
 
@@ -32,6 +34,12 @@ const filterSlice = createSlice({
 		setTypeFilter(state, action) {
 			state.typeFilter = action.payload;
 		},
+		setStanderdFilter(state, action) {
+			state.standerdFilter = action.payload;
+		},
+		setSortNumbers(state, action) {
+			state.sortNumbers = action.payload;
+		},
 		setHideZeros(state, action) {
 			state.hideZeros = action.payload;
 		},
@@ -42,6 +50,8 @@ const filterSlice = createSlice({
 			state.materialFilter = '';
 			state.sizeFilter = '';
 			state.typeFilter = '';
+			state.standerdFilter = '';
+			state.sortNumbers = '';
 			state.hideZeros = false;
 		},
 	},
@@ -54,8 +64,10 @@ export const {
 	setMaterialFilter,
 	setSizeFilter,
 	setTypeFilter,
+	setStanderdFilter,
 	resetFilters,
 	setHideZeros,
+	setSortNumbers,
 } = filterSlice.actions;
 
 export default filterSlice.reducer;

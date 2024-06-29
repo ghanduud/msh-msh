@@ -25,6 +25,7 @@ import { HiArrowUpOnSquare } from 'react-icons/hi2';
 import Spinner from '../../components/Spinner';
 import { useEffect, useState } from 'react';
 import { useCreateOutOrder } from './useCreateOutOrder';
+import { useStanderd } from '../standerd/useStanderd';
 
 const FormCollection = styled.div`
 	display: flex;
@@ -70,6 +71,8 @@ function CreateOutOrderForm() {
 
 	const { isLoading: isLoadingTypes, types } = useType();
 
+	const { isLoading: isLoadingStanderds, standerds } = useStanderd();
+
 	const { isLoading: isLoadingSizes, sizes } = useSize();
 
 	const { isLoading: isLoadingMaterials, materials } = useMaterial();
@@ -88,6 +91,7 @@ function CreateOutOrderForm() {
 		isLoadingManufactures ||
 		isLoadingInventories ||
 		isLoadingItems ||
+		isLoadingStanderds ||
 		isCreating;
 
 	useEffect(() => {
@@ -117,6 +121,11 @@ function CreateOutOrderForm() {
 	const materialsOptions = [
 		{ value: '', label: 'اختر' },
 		...materials.map((material) => ({ value: material.id, label: material.name })),
+	];
+
+	const standerdsOptions = [
+		{ value: '', label: 'اختر' },
+		...standerds.map((standerd) => ({ value: standerd.id, label: standerd.name })),
 	];
 
 	const manufacturesOptions = [
@@ -164,6 +173,7 @@ function CreateOutOrderForm() {
 			type: '',
 			size: '',
 			material: '',
+			standerd: '',
 			manufacture: '',
 			inventory: '',
 			numberOfPieces: '',
@@ -182,6 +192,7 @@ function CreateOutOrderForm() {
 		dispatch(setSellItemArray(updatedSellItemArray));
 	}
 
+	console.log(sellItemArray);
 
 	return (
 		<>
@@ -240,6 +251,7 @@ function CreateOutOrderForm() {
 						typeOptions={typeOptions}
 						sizesOptions={sizesOptions}
 						materialsOptions={materialsOptions}
+						standerdsOptions={standerdsOptions}
 						manufacturesOptions={manufacturesOptions}
 						inventoriesOptions={inventoriesOptions}
 						items={items}

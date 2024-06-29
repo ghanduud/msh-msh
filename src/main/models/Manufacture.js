@@ -10,19 +10,71 @@ async function createManufacture({ name, phoneNumber, email }) {
 		if (!tableExists.includes('Manufactures')) {
 			// If the table doesn't exist, create it
 			await Manufacture.sync();
-			// console.log('Manufacture table created.');
 		}
 
 		// Add the provided manufacture to the table
-		await Manufacture.create({
+		const newManufacture = await Manufacture.create({
 			name: name,
 			phoneNumber: phoneNumber,
 			email: email,
 		});
 
+		// Fetch all unique items characteristics
+		const items = await Item.findAll({
+			attributes: [
+				'CategoryId',
+				'TypeId',
+				'SizeId',
+				'MaterialId',
+				'StanderdId',
+				'InventoryId',
+				'weightPerPiece',
+				'pricePerKilo',
+			],
+			group: [
+				'CategoryId',
+				'TypeId',
+				'SizeId',
+				'MaterialId',
+				'StanderdId',
+				'InventoryId',
+				'weightPerPiece',
+				'pricePerKilo',
+			],
+		});
+
+		// Create entries for each existing item for the new manufacture with numberOfPieces set to 0
+		for (const item of items) {
+			const {
+				CategoryId,
+				TypeId,
+				SizeId,
+				MaterialId,
+				StanderdId,
+				weightPerPiece,
+				pricePerKilo,
+				InventoryId,
+			} = item;
+
+			const itemId = `${CategoryId}-${TypeId}-${SizeId}-${MaterialId}-${StanderdId}-${newManufacture.id}-${InventoryId}`;
+			await Item.create({
+				id: itemId, // Set the unique item ID
+				weightPerPiece: weightPerPiece,
+				pricePerKilo: pricePerKilo,
+				numberOfPieces: 0, // Set numberOfPieces to 0
+				CategoryId: CategoryId,
+				TypeId: TypeId,
+				SizeId: SizeId,
+				ManufactureId: newManufacture.id,
+				MaterialId: MaterialId,
+				StanderdId: StanderdId,
+				InventoryId: InventoryId,
+			});
+		}
+
 		return { error: null };
 	} catch (error) {
-		// console.error('Error syncing Manufacture model:', error);
+		console.error(error);
 		return { error: `Error adding manufacture` };
 	}
 }

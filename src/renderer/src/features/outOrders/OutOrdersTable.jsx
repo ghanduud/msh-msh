@@ -10,7 +10,7 @@ function OutOrdersTable() {
 
 	if (isLoading) return <Spinner />;
 
-	if (!outOrders.length) return <Empty resourceName='bookings' />;
+	if (!outOrders.length) return <Empty resourceName='طلبات' />;
 
 	// Sort the outOrders by createdAt date, latest first
 	const sortedOutOrders = [...outOrders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
